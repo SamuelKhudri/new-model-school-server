@@ -3,7 +3,7 @@ const { MongoClient } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config()
 // stripe secret key get
-const stripe = require('stripe')(process.env.STRIPE_SECRET);
+// const stripe = require('stripe')(process.env.STRIPE_SECRET);
 // require id for delete
 const ObjectId = require('mongodb').ObjectId;
 //----app use----- 
@@ -42,7 +42,7 @@ async function run() {
             const result = await cursor.toArray();
             res.json(result);
         });
-        // ---single products------
+        // ---single faculty for place admit page------
         app.get("/faculties/:id", async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -50,20 +50,20 @@ async function run() {
             res.send(result);
         });
         // post product
-        // app.post('/products', async (req, res) => {
-        //     const service = req.body;
-        //     const result = await productsCollection.insertOne(service);
-        //     console.log(result);
-        //     res.json(result)
-        // });
-        /////delete product
-        // app.delete('/products/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const query = { _id: ObjectId(id) };
-        //     const result = await productsCollection.deleteOne(query);
-        //     console.log('deleted id', result);
-        //     res.json(result);
-        // });
+        app.post('/faculties', async (req, res) => {
+            const service = req.body;
+            const result = await facultiesCollection.insertOne(service);
+            console.log(result);
+            res.json(result)
+        });
+        /////delete faculties
+        app.delete('/faculties/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await facultiesCollection.deleteOne(query);
+            console.log('deleted id', result);
+            res.json(result);
+        });
 
         // ----------------------Orders section-----------------------
 
