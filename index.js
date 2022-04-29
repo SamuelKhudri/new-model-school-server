@@ -24,7 +24,7 @@ async function run() {
         const database = client.db('new_model_school');
         const facultiesCollection = database.collection('faculties');
         // const categoriesCollection = database.collection('categories');
-        // const ordersCollection = database.collection('orders');
+        const studentsCollection = database.collection('students');
         // const reviewCollection = database.collection('review');
         const usersCollection = database.collection('users');
 
@@ -43,12 +43,12 @@ async function run() {
             res.json(result);
         });
         // ---single products------
-        // app.get("/products/:id", async (req, res) => {
-        //     const id = req.params.id;
-        //     const query = { _id: ObjectId(id) };
-        //     const result = await productsCollection.findOne(query);
-        //     res.send(result);
-        // });
+        app.get("/faculties/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await facultiesCollection.findOne(query);
+            res.send(result);
+        });
         // post product
         // app.post('/products', async (req, res) => {
         //     const service = req.body;
@@ -65,7 +65,7 @@ async function run() {
         //     res.json(result);
         // });
 
-        // ---------------------------------Orders section-----------------------
+        // ----------------------Orders section-----------------------
 
         //get users orders from database
         // app.get('/orders', async (req, res) => {
@@ -97,12 +97,12 @@ async function run() {
 
 
         // post order info to orders collection
-        // app.post('/orders', async (req, res) => {
-        //     const order = req.body;
-        //     const result = await ordersCollection.insertOne(order);
-        //     console.log('post succ', result)
-        //     res.json(result);
-        // });
+        app.post('/students', async (req, res) => {
+            const order = req.body;
+            const result = await studentsCollection.insertOne(order);
+            console.log('post succ', result)
+            res.json(result);
+        });
 
         // ---------manage All orders section------
 
