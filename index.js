@@ -3,7 +3,7 @@ const { MongoClient } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config()
 // stripe secret key get
-// const stripe = require('stripe')(process.env.STRIPE_SECRET);
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 // require id for delete
 const ObjectId = require('mongodb').ObjectId;
 //----app use----- 
@@ -65,16 +65,26 @@ async function run() {
             res.json(result);
         });
 
-        // ----------------------Orders section-----------------------
+        // ----------------------Students section-----------------------
 
         //get users orders email based from database
-        // app.get('/orders', async (req, res) => {
-        //     const email = req.query.email;
-        //     const query = { email: email }
-        //     const cursor = ordersCollection.find(query);
-        //     const orders = await cursor.toArray();
-        //     res.json(orders);
-        // });
+        app.get('/students', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email }
+            const cursor = studentsCollection.find(query);
+            const orders = await cursor.toArray();
+            res.json(orders);
+        });
+
+        // dleted user for my order review page btn
+
+        app.delete('/students/:email', async (req, res) => {
+            const id = req.params.email;
+            const query = { _id: ObjectId(id) };
+            const result = await studentsCollection.deleteOne(query);
+            console.log('deleted id', result);
+            res.json(result);
+        });
 
         // get data for nav bar cart
         // app.get('/orders/cart', async (req, res) => {
@@ -85,17 +95,7 @@ async function run() {
         //     res.json(orders);
         // });
 
-        // dleted user for my order review page btn
-
-        // app.delete('/orders/:email', async (req, res) => {
-        //     const id = req.params.email;
-        //     const query = { _id: ObjectId(id) };
-        //     const result = await ordersCollection.deleteOne(query);
-        //     console.log('deleted id', result);
-        //     res.json(result);
-        // });
-
-        // show updated data after update by put
+        // show updated student data after update by put
         app.put('/students/update/:id', async (req, res) => {
             const id = req.params.id;
             const updatedUser = req.body;
@@ -113,7 +113,7 @@ async function run() {
         });
 
 
-        // post order info to students collection
+        // post students info to students collection
         app.post('/students', async (req, res) => {
             const order = req.body;
             const result = await studentsCollection.insertOne(order);
@@ -210,31 +210,31 @@ async function run() {
 
         //    ---------------Payment Section started---------------
         // define payment data get for stripe payments
-        // app.post('/create-payment-intent', async (req, res) => {
-        //     const paymentInfo = req.body;
-        //     const paymentAmount = parseInt(paymentInfo?.cost)
-        //     const amount = paymentAmount * 100;
-        //     const paymentIntent = await stripe.paymentIntents.create({
-        //         currency: 'usd',
-        //         amount: amount,
-        //         payment_method_types: ['card']
-        //     });
-        //     res.json({ clientSecret: paymentIntent.client_secret })
-        // });
+        app.post('/create-payment-intent', async (req, res) => {
+            const paymentInfo = req.body;
+            const paymentAmount = parseInt(paymentInfo?.cost)
+            const amount = paymentAmount * 100;
+            const paymentIntent = await stripe.paymentIntents.create({
+                currency: 'usd',
+                amount: amount,
+                payment_method_types: ['card']
+            });
+            res.json({ clientSecret: paymentIntent.client_secret })
+        });
 
-        //---put students info after update and set payment
-        // app.put('/students/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const payment = req.body;
-        //     const filter = { _id: ObjectId(id) };
-        //     const updateDoc = {
-        //         $set: {
-        //             payment: payment
-        //         }
-        //     }
-        //     const result = await studentsCollection.updateOne(filter, updateDoc);
-        //     res.json(result)
-        // });
+        //----put students info after update and set payment
+        app.put('/students/:id', async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    payment: payment
+                }
+            }
+            const result = await studentsCollection.updateOne(filter, updateDoc);
+            res.json(result)
+        });
 
 
     }
