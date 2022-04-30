@@ -25,7 +25,8 @@ async function run() {
         const facultiesCollection = database.collection('faculties');
         // const categoriesCollection = database.collection('categories');
         const studentsCollection = database.collection('students');
-        // const reviewCollection = database.collection('review');
+        const noticeCollection = database.collection('notice');
+        // const routineCollection = database.collection('routine');
         const usersCollection = database.collection('users');
 
 
@@ -148,23 +149,32 @@ async function run() {
             res.send(result);
         });
 
-        // -----------------review section-------------------
+        // -----------------Notice section-------------------
 
-        // add single review post to database
-        // app.post('/review', async (req, res) => {
-        //     const service = req.body;
-        //     // console.log('hit the post api', service);
-        //     const result = await reviewCollection.insertOne(service);
-        //     console.log(result);
-        //     res.json(result)
-        // });
+        // add single notice post to database
+        app.post('/notice', async (req, res) => {
+            const service = req.body;
+            // console.log('hit the post api', service);
+            const result = await noticeCollection.insertOne(service);
+            console.log(result);
+            res.json(result)
+        });
+
+        // set delete state jfor notice 
+        app.delete('/notice/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await noticeCollection.deleteOne(query);
+            console.log('deleted id', result);
+            res.json(result);
+        })
 
         // get all review data
-        // app.get('/review', async (req, res) => {
-        //     const cursor = reviewCollection.find({});
-        //     const result = await cursor.toArray();
-        //     res.json(result);
-        // });
+        app.get('/notice', async (req, res) => {
+            const cursor = noticeCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        });
 
         //  -----------------users get post and admin section--------------------
 
