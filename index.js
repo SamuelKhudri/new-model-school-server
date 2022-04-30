@@ -67,7 +67,7 @@ async function run() {
 
         // ----------------------Orders section-----------------------
 
-        //get users orders from database
+        //get users orders email based from database
         // app.get('/orders', async (req, res) => {
         //     const email = req.query.email;
         //     const query = { email: email }
@@ -95,8 +95,25 @@ async function run() {
         //     res.json(result);
         // });
 
+        // show updated data after update by put
+        app.put('/students/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedUser = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name: updatedUser.name,
+                    email: updatedUser.email
+                },
+            };
+            const result = await studentsCollection.updateOne(filter, updateDoc, options)
+            console.log('updating', id)
+            res.json(result)
+        });
 
-        // post order info to orders collection
+
+        // post order info to students collection
         app.post('/students', async (req, res) => {
             const order = req.body;
             const result = await studentsCollection.insertOne(order);
@@ -104,33 +121,33 @@ async function run() {
             res.json(result);
         });
 
-        // ---------manage All orders section------
+        // ---------manage All students section------
 
         // get customers order in the my review page
-        // app.get('/orders/all', async (req, res) => {
-        //     const cursor = ordersCollection.find({});
-        //     const users = await cursor.toArray();
-        //     res.send(users);
-        // });
+        app.get('/students/all', async (req, res) => {
+            const cursor = studentsCollection.find({});
+            const users = await cursor.toArray();
+            res.send(users);
+        });
 
         // dleted users order from manage all order page
-        // app.delete('/orders/all/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const query = { _id: ObjectId(id) };
-        //     const result = await ordersCollection.deleteOne(query);
-        //     console.log('deleted id', result);
-        //     res.json(result);
-        // });
+        app.delete('/students/all/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await studentsCollection.deleteOne(query);
+            console.log('deleted id', result);
+            res.json(result);
+        });
 
         // user update from server to show 
-        // app.get('/orders/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const query = { _id: ObjectId(id) };
-        //     const result = await ordersCollection.findOne(query);
-        //     res.send(result);
-
-        // });
         // ai part er pore data ta /5000/users/id te pabo
+        app.get('/students/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await studentsCollection.findOne(query);
+            res.send(result);
+        });
+
         // -----------------review section-------------------
 
         // add single review post to database
@@ -205,8 +222,8 @@ async function run() {
         //     res.json({ clientSecret: paymentIntent.client_secret })
         // });
 
-        //---put api
-        // app.put('/orders/:id', async (req, res) => {
+        //---put students info after update and set payment
+        // app.put('/students/:id', async (req, res) => {
         //     const id = req.params.id;
         //     const payment = req.body;
         //     const filter = { _id: ObjectId(id) };
@@ -215,7 +232,7 @@ async function run() {
         //             payment: payment
         //         }
         //     }
-        //     const result = await ordersCollection.updateOne(filter, updateDoc);
+        //     const result = await studentsCollection.updateOne(filter, updateDoc);
         //     res.json(result)
         // });
 
