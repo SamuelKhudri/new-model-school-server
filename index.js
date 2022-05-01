@@ -26,7 +26,7 @@ async function run() {
         // const categoriesCollection = database.collection('categories');
         const studentsCollection = database.collection('students');
         const noticeCollection = database.collection('notice');
-        // const routineCollection = database.collection('routine');
+        const routineCollection = database.collection('routine');
         const usersCollection = database.collection('users');
 
 
@@ -172,6 +172,32 @@ async function run() {
         // get all review data
         app.get('/notice', async (req, res) => {
             const cursor = noticeCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        });
+        // -----------------Routine section start-------------------
+
+        // add single routine post to database
+        app.post('/routine', async (req, res) => {
+            const service = req.body;
+            // console.log('hit the post api', service);
+            const result = await routineCollection.insertOne(service);
+            console.log(result);
+            res.json(result)
+        });
+
+        // set delete state jfor routine
+        app.delete('/routine/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await routineCollection.deleteOne(query);
+            console.log('deleted id', result);
+            res.json(result);
+        })
+
+        // get all routine data
+        app.get('/routine', async (req, res) => {
+            const cursor = routineCollection.find({});
             const result = await cursor.toArray();
             res.json(result);
         });
