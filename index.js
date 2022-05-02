@@ -23,7 +23,7 @@ async function run() {
         await client.connect();
         const database = client.db('new_model_school');
         const facultiesCollection = database.collection('faculties');
-        // const categoriesCollection = database.collection('categories');
+        const teachersCollection = database.collection('teachers');
         const studentsCollection = database.collection('students');
         const noticeCollection = database.collection('notice');
         const routineCollection = database.collection('routine');
@@ -198,6 +198,34 @@ async function run() {
         // get all routine data
         app.get('/routine', async (req, res) => {
             const cursor = routineCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        });
+
+
+        // -----------------Teacher section start-------------------
+
+        // add single teacher post to database
+        app.post('/teacher', async (req, res) => {
+            const service = req.body;
+            // console.log('hit the post api', service);
+            const result = await teachersCollection.insertOne(service);
+            console.log(result);
+            res.json(result)
+        });
+
+        // set delete state jfor teacher
+        app.delete('/teacher/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await teachersCollection.deleteOne(query);
+            console.log('deleted id', result);
+            res.json(result);
+        })
+
+        // get all teachers data
+        app.get('/teacher', async (req, res) => {
+            const cursor = teachersCollection.find({});
             const result = await cursor.toArray();
             res.json(result);
         });
