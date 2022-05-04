@@ -25,8 +25,10 @@ async function run() {
         const facultiesCollection = database.collection('faculties');
         const teachersCollection = database.collection('teachers');
         const studentsCollection = database.collection('students');
+        const subjectsCollection = database.collection('subjects');
         const noticeCollection = database.collection('notice');
         const routineCollection = database.collection('routine');
+        const massegesCollection = database.collection('masseges');
         const usersCollection = database.collection('users');
 
 
@@ -36,6 +38,29 @@ async function run() {
         //     const result = await cursor.toArray();
         //     res.json(result);
         // });
+        // -----------massege section start-----post massege data
+        app.post('/masseges', async (req, res) => {
+            const service = req.body;
+            const result = await massegesCollection.insertOne(service);
+            console.log(result);
+            res.json(result)
+        });
+        // ------------get receiver massege by emailquery
+        app.get('/masseges', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email }
+            const cursor = massegesCollection.find(query);
+            const orders = await cursor.toArray();
+            res.json(orders);
+        });
+        // delete reciever email based on id
+        app.delete('/masseges/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await massegesCollection.deleteOne(query);
+            console.log('deleted id', result);
+            res.json(result);
+        })
 
         // ------------------------faculties section section-----------------
         app.get('/faculties', async (req, res) => {
@@ -122,16 +147,16 @@ async function run() {
             res.json(result);
         });
 
-        // ---------manage All students section------
+        // ------------manage All students section---S---T--U--D--E--N--T--S--
 
-        // get customers order in the my review page
+        // get students in the my review page
         app.get('/students/all', async (req, res) => {
             const cursor = studentsCollection.find({});
             const users = await cursor.toArray();
             res.send(users);
         });
 
-        // dleted users order from manage all order page
+        // dleted delet uniquedata  from manage all students page
         app.delete('/students/all/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -143,6 +168,13 @@ async function run() {
         // user update from server to show 
         // ai part er pore data ta /5000/users/id te pabo
         app.get('/students/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await studentsCollection.findOne(query);
+            res.send(result);
+        });
+        // ai part er pore data ta /5000/users/id te pabo
+        app.get('/students/chat/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await studentsCollection.findOne(query);
@@ -160,7 +192,7 @@ async function run() {
             res.json(result)
         });
 
-        // set delete state jfor notice 
+        // set delete state for notice 
         app.delete('/notice/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -169,7 +201,7 @@ async function run() {
             res.json(result);
         })
 
-        // get all review data
+        // get all notice data
         app.get('/notice', async (req, res) => {
             const cursor = noticeCollection.find({});
             const result = await cursor.toArray();
@@ -186,7 +218,7 @@ async function run() {
             res.json(result)
         });
 
-        // set delete state jfor routine
+        // set delete state for single routine
         app.delete('/routine/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -214,7 +246,7 @@ async function run() {
             res.json(result)
         });
 
-        // set delete state jfor teacher
+        // set delete state for single teacher
         app.delete('/teacher/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -226,6 +258,32 @@ async function run() {
         // get all teachers data
         app.get('/teacher', async (req, res) => {
             const cursor = teachersCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        });
+        // -----------------Subjects section start-------------------
+
+        // add single subjects post to database
+        app.post('/subjects', async (req, res) => {
+            const service = req.body;
+            // console.log('hit the post api', service);
+            const result = await subjectsCollection.insertOne(service);
+            console.log(result);
+            res.json(result)
+        });
+
+        // set delete state for single subjects
+        app.delete('/subjects/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await subjectsCollection.deleteOne(query);
+            console.log('deleted id', result);
+            res.json(result);
+        })
+
+        // get all subjects data
+        app.get('/subjects', async (req, res) => {
+            const cursor = subjectsCollection.find({});
             const result = await cursor.toArray();
             res.json(result);
         });
